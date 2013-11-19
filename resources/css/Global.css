@@ -1,0 +1,40 @@
+@CHARSET "UTF-8";
+/* GLOBAL STYLES -------------------------------------------------- */
+/* Padding below the footer and lighter body text */
+
+.navbar-inverse { background-color: #000; font-weight: bold; opacity: .75;}
+.navbar-inverse .navbar-nav>.active>a:hover,.navbar-inverse .navbar-nav>li>a:hover, .navbar-inverse .navbar-nav>li>a:focus { background-color: #999999}
+.navbar-inverse .navbar-nav>.active>a,.navbar-inverse .navbar-nav>.open>a,.navbar-inverse .navbar-nav>.open>a, .navbar-inverse .navbar-nav>.open>a:hover,.navbar-inverse .navbar-nav>.open>a, .navbar-inverse .navbar-nav>.open>a:hover, .navbar-inverse .navbar-nav>.open>a:focus { background-color: #024723}
+.dropdown-menu { background-color: #047A3C}
+.dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus { background-color: #999999}
+.navbar-inverse { border-color: #080808}
+.navbar-inverse .navbar-brand { color: #CCFFCC; font-size: 42px;}
+.navbar-inverse .navbar-brand:hover { color: #047A3C}
+.navbar-inverse .navbar-nav>li>a { color: #CCFFCC}
+.navbar-inverse .navbar-nav>li>a:hover, .navbar-inverse .navbar-nav>li>a:focus { color: #047A3C}
+.navbar-inverse .navbar-nav>.active>a,.navbar-inverse .navbar-nav>.open>a, .navbar-inverse .navbar-nav>.open>a:hover, .navbar-inverse .navbar-nav>.open>a:focus { color: #047A3C}
+.navbar-inverse .navbar-nav>.active>a:hover, .navbar-inverse .navbar-nav>.active>a:focus { color: #047A3C}
+.dropdown-menu>li>a { color: #333333}
+.dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus { color: #047A3C}
+.navbar-inverse .navbar-nav>.dropdown>a .caret { border-top-color: #999999}
+.navbar-inverse .navbar-nav>.dropdown>a:hover .caret { border-top-color: #047A3C}
+.navbar-inverse .navbar-nav>.dropdown>a .caret { border-bottom-color: #999999}
+.navbar-inverse .navbar-nav>.dropdown>a:hover .caret { border-bottom-color: #047A3C}
+
+
+.body{
+	min-height: 100%;
+	position: relative;
+}
+
+.btn-delete{
+	background:#FFFFFF;
+	border:#FFFFFF;
+	color: #035D2D;
+	text-decoration: underline;
+	font-size: 31.5px;
+	margin: 0px;
+	margin-bottom: 2px;
+	font-weight:bold;
+}
+
