@@ -1,64 +1,81 @@
 <?php
-    include ("resources.php");
-    //figure dis out this is format for DBDBDBDBDBDBDBDB
-   //this is all select stuff which is probably more of a snapshot thing
+	include("WateringUtil.php");
+	include("resources.php");
+	
+	$EVERYDAY = False;
+	if ($_POST['FWet'] == "") {
+		header("HTTP/1.1 400");
+		echo "FWet not set";
+		exit;
+	}
+	if (!is_numeric($_POST['FWet'])) {
+		header("HTTP/1.1 400");
+		echo "Field Capacity Wet Weight is not an Integer.";
+		exit;
+	}
+	if ($_POST["StartDate"] == "") {
+		header("HTTP/1.1 400");
+		echo "Start Date not set";
+		exit;
+	}
+	if ($_POST["EndDate"] == "") {
+		header("HTTP/1.1 400");
+		echo "End Date not set";
+		//exit;
+	}
+	$StartDate = $_POST["StartDate"];
+	$EndDate = $_POST["EndDate"];
+	$fcapacity_wet_weight = $_POST['FWet'];
+	
+	$Util = new WateringUtil($StartDate, $EndDate, $fcapacity_wet_weight);
+	
+	//get all cars
+	$result = pg_query($system, $Util->cars_query);
+	
+	if (!$result) {
+		header("HTTP/1.1 400");
+		echo "An error getting all cars has occured.\n";
+		exit;
+	}
+	
+	$all_cars = pg_fetch_all($result); //carid identcode
 
-   /*
-    Fertilizer is 8x more concentrated
-    
-    so 1ml of fertilizer = 8ml of water?
+	$Util->buildAssocCars($all_cars);
+	
+	$Util->buildSnapQuery();
+	
+	$result = pg_query($test, $Util->snap_query);
+	if (!$result) {
+		header("HTTP/1.1 400");
+		echo "An error occurred getting all the most recent snapshots.\n";
+		exit;
+	}
+	$snapshots = pg_fetch_all($result);
 
-    start = 100 and target = 150:
-    
-    Weight of pot + plant = 500g
-    Weight of plant = 100g (or whatever biomass calc here)
+	$counter = 0;
+	foreach ($snapshots as $snapshot) {
+		if (!$EVERYDAY ) {
+			$date = $StartDate;
+				
+			$snapquery1 = $Util->buildSnapshotVals($snapshot, $date, $Util->pump1);
+			$snapquery2 = $Util->buildSnapshotVals($snapshot, $date, $Util->pump2);
+			$result = pg_query($system, $snapquery1);
+			if (!$result) {
+				echo "An error occurred.\n";
+				echo pg_result_error($result) . "\n";
+				die();
+			}
+			$result = pg_query($system, $snapquery1);
+			if (!$result) {
+				echo "An error occurred.\n";
+				echo pg_result_error($result) . "\n";
+				die();
+			}
+			$counter += 2;
+		} else {
+			//if we are setting for every day until completion just use the DateTime iterator.
+		}
+	}
+	echo "Executed " . $counter . " insertions.";
 
-    Actual weight of pot = 400g (snapshot.real_before) or previous w/e
-    Target weight = 600g
-    Target – actual pot = 200g = 200ml
-
-    In a 2-step process (?):
-    12, 14 are probably important pumps
-
-    but, the script kevin sent uses all the pumps/
-     
-    1.      water to target weight 425g (pump 2, fertilizer) pump2a001?
-    2.      water to target weight 600g (pump 1, water) pump1a001?
-    */
-
-    /*
-         formula taken from bash shell script
-         if SW in [501..600] -> TV=50"
-         if SW in [601..700] -> TV=60"
-         if SW in [701..800] -> TV=80" 
-         if SW in [801..900] -> TV=100"    
-    */
-
-    // Note, Absolute means, water x amount
-    // TargetWeight means water until x weight.
-    if ( $_POST['OrigWeight'] == ""){
-        echo "invalid variable";
-        exit;
-    }
-    if ( ! is_numeric($_POST['OrigWeight'])){
-        echo "not an integer";
-        exit;
-    }
-    $sw = ($_POST['OrigWeight']);
-    if ( $sw > 800 && $sw <= 900){
-        $tv = 100;
-    } 
-    else if($sw > 700){
-        $tv = 80;
-    }
-    else if($sw > 600){
-        $tv = 60;
-    }
-    else if($sw > 500){
-        $tv = 50;
-    } else{
-        $tv = 0;
-    }
-    echo "start " . $sw . " target" . $tv;
-    //       printf "%s;%s;0;24;%i;TargetWeight;0;Skip;0;5,7,9,12,14\n", snapshot(sampleid?irrelevant?), datetime, target; \
 ?>

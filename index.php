@@ -35,8 +35,8 @@
             <div style="height: 200px"></div>
             <form id = "form" role="form" class="select-data">
                 <div class="form-group">
-                    <label for="OrigWeight">Current Weight:</label>
-                    <input type="text" class="form-control" id="orig" name="OrigWeight"/>
+                    <label for="FWet">Field Capacity Wet Weight</label>
+                    <input type="text" class="form-control" id="orig" name="FWet"/>
                     <label for="MeasLabel">Measurement Label:</label>
                     <select name = "MeasLabel" class="form-control">
                         <option value="lable1">lable 1</option>
@@ -45,6 +45,8 @@
                     </select>
                     <label for="StartDate">Starting:</label>
                     <input type="text" class="form-control" name="StartDate" id="starting"/>           
+                    <label for="EndDate">Ending:</label>
+                    <input type="text" class="form-control" name="EndDate" id="ending"/>           
                 </div>
                 <div class="result hidden"></div>
                 <button type="submit" id="submit" class="btn btn-default btn-block btn-large">Submit</button>
@@ -55,6 +57,7 @@
 <script type="text/javascript">
 $(document).ready(function(){
     $('#starting').datetimepicker();
+    $('#ending').datetimepicker();
     $("#submit").click(function(event){
         var formlist = $("#form").serializeArray();
         var OrigWeight = $("#orig").val();
