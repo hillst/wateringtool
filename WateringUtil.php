@@ -65,7 +65,7 @@ Class WateringUtil{
 	 */
 	function buildSnapshotVals($snapshot, $date, $pump){
 		$calculated_amount = $this->CalculateWatering($this->fcapacity_wet_weight, $snapshot["weight_before"]);
-		$car_insert = $this->water_insert_query . "( '".$this->assoc_cars[$snapshot["car_tag"]]."', '$date',0,24,$calculated_amount,'TargetWeight',FALSE,'Waiting',0,$this->notcomplete,'Skip',-1,'LTAdmin','". date("Y-m-d H:i:sO")."',$pump,'' )";
+		$car_insert = $this->water_insert_query . "( '".$this->assoc_cars[$snapshot["car_tag"]]."', '$date',0,24,$calculated_amount,'TargetWeight',FALSE,'Waiting',0,$this->notcomplete,'Skip',-1,'LTAdmin','". date("Y-m-d H:i:sO")."','$pump','' )";
 		return $car_insert; //:( need to return both
 	}
 	
@@ -77,4 +77,28 @@ Class WateringUtil{
 		return $tot_watering_amount;
 	
 	}
+}
+/**
+ * returns all of the cars in a 2d list, 0 => (carid => 1, identcode => MSWplant)
+ */
+function getAllCars($db){
+	$query = "SELECT plants.carid, plants.identcode FROM public.plants WHERE plants.active = true AND plants.on_system = true";
+	$result = pg_query($db, $query);
+	if (!$result) {
+		echo "An error getting all cars has occured.\n";
+		return;
+	}
+	return pg_fetch_all($result); //carid identcode
+}
+/**
+ * returns a 2d list, 0 =>(pumpname=>BARCODE, id=>14)
+ */
+function getAllPumps($db){
+	$query = "SELECT pumpname, id from pumps where state != 1";
+	$result = pg_query($db, $query);
+	if (! $result ){
+		echo "An error fetching pumps has occured.\n";
+		return;
+	}
+	return pg_fetch_all($result);
 }
