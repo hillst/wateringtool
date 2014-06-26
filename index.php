@@ -15,18 +15,14 @@
     <link rel="stylesheet" type="text/css"  href="/resources/css/jquery-ui-1.10.3.custom.min.css">
     <script type="text/javascript" src="/resources/js/jquery-ui-timepicker-addon.js"></script>
     <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap-3.0.0.min.css">
+    <link rel="stylesheet" type="text/css" href="/resources/css/watering.css">
     <script type="text/javascript" src="/resources/js/jquery.fastLiveFilter.js"></script>
-    <style type="text/css">
-		#searcher{
-			font-size: 14px;
-			height: 300px;
-			overflow: scroll;
-			border: 1px solid black;
-		}
-	</style>
-   	
+    <script type="text/javascript" src="/resources/js/angular.min.js"></script>
+    <script type="text/javascript" src="app.js"></script>
+    <link href="/resources/images/favicon.ico" rel="icon" type="image/x-icon" />   	
 </head>
 <body>
+<div ng-app="wateringResources">
   <nav class="navbar navbar-default" role="navigation">
   <!-- Brand and toggle get grouped for better mobile display -->
   <div class="navbar-header">
@@ -45,6 +41,7 @@
     <div class="container">
         <div class="jumbotron" style="font-size: 14px">
             <h1>Calculate watering schedule</h1>
+            <h3 class="alert alert-warning" >SUBMISSIONS ARE CURRENTLY DISABLED</h3>
             <p>
             	This tool schedules jobs in the WATERING TABLE based on several parameters. These parameters are, field capacity wet weight, car barcode, last measured weight, average car weight,
             	biomass, a set of dates, and a set of pumps. It will submit a watering job for each of these, starting with the selected starting date, and ending (but not including)
@@ -64,7 +61,7 @@
                     <label for="FWet">Field Capacity Wet Weight</label>
                     <input type="text" class="form-control" id="orig" name="FWet"/>
                     <h3>Measurement Label</h3>
-                    <?php 
+                   <?php 
                     	foreach(getAllPumps($system) as $pump){ 
 							echo '<div class="checkbox">'
 							. '  <label>'
@@ -84,20 +81,19 @@
                     <input type="text" class="form-control" name="EndDate" id="ending"/>           
                 </div>
                 <div>
+                    <h5>Apply cart fileters (displayed carts will be scheduled for watering)</h5>
                 	<div class="form-group filterform" action="#">
-					    <label for="FilterInput">Apply cart filter: (displayed carts will be scheduled for watering)</label>
-		       			<input type="text" class="filterinput form-control" placeholder="Filter carts...">
+					    <label for="FilterInput">Contains cart filter</label>
+		       			<input type="text" class="filterinput form-control" placeholder="Filter carts..." ng-model="query.identcode">
 		   		 	</div>
-		    		<div id="searcher">
-				    <table class="table" id="list" >
-				    	<?php 
-				    		$cars = getAllCars($system);
-				    		foreach($cars as $car){
-				    			echo "<tr><td>".$car['identcode']."\t</td></tr>\n";
-				    		}
-				    	?>
-				      
-				    </table>
+                    <div class="form-group filterform" action="#">
+                        <label for="FilterInput">Begins-with filter</label>
+                        <input type="text" class="filterinput form-control" placeholder="Filter carts..." ng-model="query2">
+                    </div>
+		    		<div id="searcher" ng-controller="cartListCtrl as carts">
+                        <div ng-repeat="cart in carts.carts | filter: beginsWith(query2) | filter: query"> 
+                            <div class="ngrow">{{ cart.identcode }} </div>
+                        </div>
                 	</div>
                 </div>
                 <div class="result hidden"></div>
@@ -108,6 +104,7 @@
         </div>
          
     </div>
+</div>
 </body>
 <script type="text/javascript">
 $(document).ready(function(){
@@ -120,7 +117,7 @@ $(document).ready(function(){
         var formlist = $("#form").serializeArray();
         var OrigWeight = $("#orig").val();
         var NewWeight = calculateTarget(OrigWeight);
-        var datas = $("#form").serialize() + "&cars=" + $("#list td").filter(":visible").text();
+        var datas = $("#form").serialize() + "&cars=" + $(".ngrow").filter(":visible").text();
         str = "You submitted: \n\n";
         $.each( formlist, function(){ str+= this.name + ": " + this.value + "\n";  });
         str += "Computed watering amount: " + NewWeight + "\n\n";;       
@@ -152,9 +149,6 @@ $(document).ready(function(){
         var NewWeight = OrigWeight;
         return NewWeight;
     } 
-    $(".filterinput").fastLiveFilter("#list tr");
-    
-
         
 });
 </script>

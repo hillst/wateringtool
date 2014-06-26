@@ -1,0 +1,12 @@
+.ngrow{
+    padding: 8px;
+    line-height: 1.428571429;
+    vertical-align: top;
+    border-top: 1px solid #ddd
+}
+#searcher{
+    font-size: 14px;
+    height: 300px;
+    overflow: scroll;
+    border: 1px solid black;
+}
