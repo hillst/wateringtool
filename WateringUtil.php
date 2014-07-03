@@ -49,9 +49,9 @@ Class WateringUtil{
 		$this->our_cars = substr($this->our_cars, 0, -2);
 		
 	}
-	
+    //Gets cars	
 	function buildSnapQuery(){
-		if ($this->our_cars == ""){				
+        if ($this->our_cars == ""){				
 			throw new Exception("our cars is not intialized");
 		}
 		$this->snap_query = "SELECT DISTINCT ON (car_tag) time_stamp, weight_before, car_tag FROM snapshot WHERE ". $this->our_cars ." ORDER BY car_tag, time_stamp DESC, time_stamp";
@@ -60,21 +60,24 @@ Class WateringUtil{
 	function buildWaterInsertQuery($values){
 		$testquery = $this->water_insert_query . "( " . $values . " )";
 	}
-	/**
-	 * Builds entire watering insertion query for passed date, pump, and snapshot.
-	 */
-	function buildSnapshotVals($snapshot, $date, $pump){
-		$calculated_amount = $this->CalculateWatering($this->fcapacity_wet_weight, $snapshot["weight_before"]);
+	
+    function buildSnapshotVals($snapshot, $date, $pump){
+		$calculated_amount = $this->CalculateWatering($this->fcapacity_wet_weight);
 		$car_insert = $this->water_insert_query . "( '".$this->assoc_cars[$snapshot["car_tag"]]."', '$date',0,24,$calculated_amount,'TargetWeight',FALSE,'Waiting',0,$this->notcomplete,'Skip',-1,'LTAdmin','". date("Y-m-d H:i:sO")."','$pump','' )";
 		return $car_insert; //:( need to return both
 	}
-	
-	
-	function CalculateWatering($fcapacity_wet_weight, $prev_weight, $biomass=0){
-		$avg_car_weight = 400; //static value that is unknown right now
-		$biomass = 0; //future option
-		$tot_watering_amount = $fcapacity_wet_weight + $avg_car_weight - $prev_weight - $biomass;
-		return $tot_watering_amount;
+
+    //insertutility that takes less setup and pushes more of the work to the other script
+    function buildInsertQuery($cartag, $date, $pump, $amount){
+        $car_insert = $this->water_insert_query . "( '". $cartag ."', '$date',0,24,$amount,'TargetWeight',FALSE,'Waiting',0,$this->notcomplete,'Skip',-1,'WebTool','". date("Y-m-d H:i:sO")."','$pump','' )";
+        return $car_insert; 
+    }
+	//targetPercent should be greater than zero and less than one.
+    // Field capacity = [(wet weight @ fc) – (dry weight)] + [(avg weight of carrier) + (dry weight)]
+    // $percentField capacity = $percient * field capacity
+    function CalculateWatering($fcapacity_wet_weight, $dry_weight, $targetPercent=1, $biomass=0){
+		$field_capacity = ($fcapacity_wet_weight - $dry_weight) * $targetPercent + $avg_car_weight + $dry_weight;
+		return $field_capacity * $targetPercent ;
 	
 	}
 }

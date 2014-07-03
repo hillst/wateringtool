@@ -58,8 +58,12 @@
             </p>
             <form id = "form" role="form" class="select-data">
                 <div class="form-group">
-                    <label for="FWet">Field Capacity Wet Weight</label>
+                    <label for="FWet">Wet Weight at Field Capacity</label>
                     <input type="text" class="form-control" id="orig" name="FWet"/>
+                    <label for="FDry">Dry Weight</label>
+                    <input type="text" class="form-control" id="orig" name="FDry"/>
+                    <label for="pTarget">Target (% of field capacity)</label>
+                    <input type="text" class="form-control" id="orig" name="pTarget"/>
                     <h3>Measurement Label</h3>
                    <?php 
                     	foreach(getAllPumps($system) as $pump){ 
@@ -117,7 +121,8 @@ $(document).ready(function(){
         var formlist = $("#form").serializeArray();
         var OrigWeight = $("#orig").val();
         var NewWeight = calculateTarget(OrigWeight);
-        var datas = $("#form").serialize() + "&cars=" + $(".ngrow").filter(":visible").text();
+        var datas = $("#form").serialize() + "&cars=" + $(".ngrow").filter(":visible").text()
+                                                                                      .trim().split(" ").join("\t");
         str = "You submitted: \n\n";
         $.each( formlist, function(){ str+= this.name + ": " + this.value + "\n";  });
         str += "Computed watering amount: " + NewWeight + "\n\n";;       

@@ -107,10 +107,10 @@
     echo "completed query";
     //       printf "%s;%s;0;24;%i;TargetWeight;0;Skip;0;5,7,9,12,14\n", snapshot(sampleid?irrelevant?), datetime, target; \
 function CalculateWatering($fcapacity_wet_weight, $prev_weight, $biomass=0){
-    $avg_car_weight = 400; //static value that is unknown right now
-    $biomass = 0; //future option
+    $avg_car_weight = 335; //grams, calculated by mindy
+    $biomass = 0; //future option, could do some calculation on the fly
+    //use noah biomass calculation to input
     $tot_watering_amount = $fcapacity_wet_weight + $avg_car_weight - $prev_weight - $biomass;
     return $tot_watering_amount;
-
 }
 ?>
